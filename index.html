@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Dream Wallet BD</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root{
@@ -131,6 +131,21 @@
                     </div>
                 </div>
 
+                <div class="glass-card p-4 mb-6 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-400 to-green-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-gift text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-200">ডেইলি বোনাস</p>
+                            <p class="text-[10px] text-gray-400">প্রতিদিন ক্লেইম করুন</p>
+                        </div>
+                    </div>
+                    <button onclick="claimDailyBonus()" id="dailyBonusBtn" class="px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-lg text-xs font-bold hover:bg-emerald-500/30 transition">
+                        ক্লেইম (+5 টাকা)
+                    </button>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div onclick="watchAd()" class="glass-card p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition group">
                         <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#00d2ff] to-[#3a7bd5] flex items-center justify-center mb-3 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition">
@@ -218,8 +233,66 @@
                 </div>
             </div>
 
+            <div id="page-profile" class="page-section hidden">
+                <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-white"><i class="fas fa-user text-[#00d2ff]"></i> প্রোফাইল</h2>
+                <div class="glass-card p-6 mb-6 text-center">
+                    <img id="profilePhoto" src="" class="w-20 h-20 rounded-full border-4 border-[#00d2ff]/30 mx-auto mb-4 object-cover shadow-lg">
+                    <h3 id="profileName" class="font-bold text-lg text-white mb-2"></h3>
+                    <p class="text-sm text-gray-400 mb-4">ইউজার আইডি: <span id="profileId" class="text-[#00d2ff]"></span></p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#00d2ff]/10 p-3 rounded-xl">
+                            <p class="text-2xl font-bold text-[#00d2ff]" id="profileBalance">0</p>
+                            <p class="text-xs text-gray-400">ব্যালেন্স</p>
+                        </div>
+                        <div class="bg-[#924eff]/10 p-3 rounded-xl">
+                            <p class="text-2xl font-bold text-[#924eff]" id="profileRefer">0</p>
+                            <p class="text-xs text-gray-400">রেফার</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-5">
+                    <h3 class="font-bold text-sm mb-3 text-[#00d2ff]">📊 স্ট্যাটাস</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-300">মোট আর্ন</span>
+                            <span class="font-bold text-[#00d2ff]" id="totalEarned">0 টাকা</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-300">মোট উইথড্র</span>
+                            <span class="font-bold text-emerald-400" id="totalWithdrawn">0 টাকা</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-300">ভেরিফাইড</span>
+                            <span class="font-bold text-emerald-400"><i class="fas fa-check-circle"></i> হ্যাঁ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="page-admin" class="page-section hidden pb-20">
                 <h2 class="text-xl font-bold mb-5 text-grad border-b border-white/10 pb-2">অ্যাডমিন প্যানেল</h2>
+
+                <div class="glass-card p-5 mb-5 bg-gradient-to-r from-[#00d2ff]/10 to-[#924eff]/10">
+                    <h3 class="font-bold text-sm mb-4 text-white">📊 ড্যাশবোর্ড</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-[#00d2ff]" id="totalUsers">0</p>
+                            <p class="text-xs text-gray-400">মোট ইউজার</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-[#924eff]" id="totalBalance">0</p>
+                            <p class="text-xs text-gray-400">মোট ব্যালেন্স</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-emerald-400" id="totalWithdrawals">0</p>
+                            <p class="text-xs text-gray-400">মোট উইথড্র</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-orange-400" id="pendingWithdrawals">0</p>
+                            <p class="text-xs text-gray-400">পেন্ডিং</p>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="glass-card p-5 mb-5">
                     <h3 class="font-bold text-sm mb-3 text-[#00d2ff]">📢 নোটিশ পাঠান</h3>
@@ -256,6 +329,7 @@
         <div onclick="navTo('task')" class="nav-item" id="nav-task"><i class="fas fa-layer-group text-xl"></i><span class="text-[10px] block mt-1">টাস্ক</span></div>
         <div onclick="navTo('withdraw')" class="nav-item" id="nav-withdraw"><i class="fas fa-wallet text-xl"></i><span class="text-[10px] block mt-1">উইথড্র</span></div>
         <div onclick="navTo('leaderboard')" class="nav-item" id="nav-leaderboard"><i class="fas fa-trophy text-xl"></i><span class="text-[10px] block mt-1">র‍্যাংক</span></div>
+        <div onclick="navTo('profile')" class="nav-item" id="nav-profile"><i class="fas fa-user text-xl"></i><span class="text-[10px] block mt-1">প্রোফাইল</span></div>
         <div onclick="navTo('chat')" class="nav-item" id="nav-chat"><i class="fas fa-comments text-xl"></i><span class="text-[10px] block mt-1">চ্যাট</span></div>
         <div onclick="navTo('admin')" class="nav-item hidden text-red-500" id="nav-admin"><i class="fas fa-user-shield text-xl"></i><span class="text-[10px] block mt-1">অ্যাডমিন</span></div>
     </div>
@@ -267,7 +341,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getDatabase, ref, set, get, update, push,
-  onChildAdded, query, orderByChild, limitToLast,
+  onChildAdded, query, orderByChild, limitToLast, equalTo,
   onValue, remove
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -360,6 +434,46 @@ async function readOnce(path) {
   const snap = await get(ref(db, path));
   return snap.exists() ? snap.val() : null;
 }
+
+/* Daily Bonus */
+window.claimDailyBonus = async () => {
+  if (adLocked) return;
+  adLocked = true;
+  try {
+    const today = new Date().toDateString();
+    const lastClaim = userData.lastDailyBonus || "";
+    if (lastClaim === today) {
+      return Swal.fire({
+        icon: "warning",
+        title: "আজকের বোনাস নেওয়া হয়েছে",
+        text: "কাল আবার চেষ্টা করুন",
+        background: "#1a1a2e",
+        color: "#fff"
+      });
+    }
+    const newBal = (userData.balance || 0) + 5;
+    await update(ref(db, `users/${currentUser.id}`), {
+      balance: newBal,
+      lastDailyBonus: today
+    });
+    document.getElementById("dailyBonusBtn").innerText = "ক্লেইমড";
+    document.getElementById("dailyBonusBtn").disabled = true;
+    document.getElementById("dailyBonusBtn").classList.add("opacity-50");
+    Swal.fire({
+      icon: "success",
+      title: "+5 টাকা যোগ হয়েছে!",
+      background: "#1a1a2e",
+      color: "#fff",
+      timer: 2000,
+      showConfirmButton: false
+    });
+  } catch (err) {
+    console.error("claimDailyBonus", err);
+    Swal.fire({ icon: "error", text: "এরর হয়েছে", background: "#1a1a2e", color: "#fff" });
+  } finally {
+    adLocked = false;
+  }
+};
 
 /* Watch Ad */
 window.watchAd = async () => {
@@ -494,8 +608,35 @@ window.navTo = (page) => {
     const box = document.getElementById("chatBox");
     box.scrollTop = box.scrollHeight;
   }, 100);
+  if (page === "profile") loadProfile();
   if (page === "admin") loadAdminPanel();
 };
+
+async function loadProfile(){
+  document.getElementById("profilePhoto").src = userData.photo;
+  document.getElementById("profileName").innerText = userData.firstName;
+  document.getElementById("profileId").innerText = currentUser.id;
+  document.getElementById("profileBalance").innerText = userData.balance || 0;
+  document.getElementById("profileRefer").innerText = userData.referCount || 0;
+
+  // Calculate total earned and withdrawn
+  let totalEarned = userData.balance || 0;
+  let totalWithdrawn = 0;
+  try {
+    const withdrawalsSnap = await get(query(ref(db,"withdrawals"), orderByChild("userId"), equalTo(currentUser.id)));
+    if (withdrawalsSnap.exists()) {
+      withdrawalsSnap.forEach(s => {
+        const w = s.val();
+        if (w.status === "paid") totalWithdrawn += w.amount;
+      });
+    }
+    totalEarned += totalWithdrawn;
+  } catch (err) {
+    console.error("loadProfile stats", err);
+  }
+  document.getElementById("totalEarned").innerText = totalEarned + " টাকা";
+  document.getElementById("totalWithdrawn").innerText = totalWithdrawn + " টাকা";
+}
 
 /* Notifications */
 window.showNotifications = async () => {
@@ -711,8 +852,38 @@ window.deleteTask = async (key) => {
   loadAdminTasks();
 };
 
+async function loadAdminStats(){
+  try {
+    const usersSnap = await get(ref(db,"users"));
+    let totalUsers = 0, totalBalance = 0;
+    if (usersSnap.exists()) {
+      usersSnap.forEach(s => {
+        totalUsers++;
+        totalBalance += s.val().balance || 0;
+      });
+    }
+    document.getElementById("totalUsers").innerText = totalUsers;
+    document.getElementById("totalBalance").innerText = totalBalance;
+
+    const withdrawalsSnap = await get(ref(db,"withdrawals"));
+    let totalWithdrawals = 0, pendingWithdrawals = 0;
+    if (withdrawalsSnap.exists()) {
+      withdrawalsSnap.forEach(s => {
+        const w = s.val();
+        totalWithdrawals += w.amount;
+        if (w.status === "pending") pendingWithdrawals++;
+      });
+    }
+    document.getElementById("totalWithdrawals").innerText = totalWithdrawals;
+    document.getElementById("pendingWithdrawals").innerText = pendingWithdrawals;
+  } catch (err) {
+    console.error("loadAdminStats", err);
+  }
+}
+
 function loadAdminPanel(){
   loadAdminTasks();
+  loadAdminStats();
   const wrap = document.getElementById("adminWithdrawals");
   onValue(query(ref(db,"withdrawals"), limitToLast(20)), snap => {
     wrap.innerHTML = "";
@@ -890,6 +1061,20 @@ async function loadLeaderboard(type="all"){
         document.getElementById("balanceDisplay").innerText = userData.balance || 0;
         document.getElementById("referDisplay").innerText = userData.referCount || 0;
         document.getElementById("refLink").value = `https://t.me/${SETTINGS.botUsername}/app?startapp=ref${currentUser.id}`;
+
+        // Check daily bonus
+        const today = new Date().toDateString();
+        const lastClaim = userData.lastDailyBonus || "";
+        const btn = document.getElementById("dailyBonusBtn");
+        if (lastClaim === today) {
+          btn.innerText = "ক্লেইমড";
+          btn.disabled = true;
+          btn.classList.add("opacity-50");
+        } else {
+          btn.innerText = "ক্লেইম (+5 টাকা)";
+          btn.disabled = false;
+          btn.classList.remove("opacity-50");
+        }
       }
     });
 
