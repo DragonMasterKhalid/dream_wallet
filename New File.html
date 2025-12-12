@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Dream Wallet BD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root{
+            --primary:#00d2ff;
+            --secondary:#924eff;
+            --accent:#ff0055;
+            --bg-color:#0f172a;
+            --card-bg:rgba(255,255,255,0.08);
+            --border:rgba(255,255,255,0.15)
+        }
+        body{
+            font-family:'Hind Siliguri',sans-serif;
+            background:#1a1a2e;
+            background-image:linear-gradient(to bottom,rgba(26,26,46,0.9),rgba(22,33,62,0.95)),url('https://img.freepik.com/free-vector/gradient-network-connection-background_23-2148879890.jpg');
+            background-size:cover;
+            background-attachment:fixed;
+            background-position:center;
+            color:#fff;
+            min-height:100vh;
+            overflow-x:hidden;
+            padding-bottom:100px;
+            user-select:none;
+            -webkit-tap-highlight-color:transparent
+        }
+        .glass-card{
+            background:var(--card-bg);
+            backdrop-filter:blur(25px);
+            -webkit-backdrop-filter:blur(25px);
+            border:1px solid var(--border);
+            border-radius:24px;
+            box-shadow:0 8px 32px 0 rgba(0,0,0,0.3);
+            transition:transform .2s,box-shadow .2s
+        }
+        .glass-card:active{transform:scale(0.98)}
+        .text-grad{background:linear-gradient(90deg,#00d2ff,#924eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+        .btn-modern{background:linear-gradient(135deg,#00d2ff 0%,#3a7bd5 100%);border:none;color:white;font-weight:600;border-radius:16px;box-shadow:0 4px 15px rgba(0,210,255,0.3);position:relative;overflow:hidden}
+        .btn-modern::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(rgba(255,255,255,0.2),transparent);opacity:0;transition:.3s}
+        .btn-modern:active::after{opacity:1}
+        .glass-nav{background:rgba(26,26,46,0.9);backdrop-filter:blur(20px);border-top:1px solid var(--border);border-radius:24px 24px 0 0;box-shadow:0 -5px 20px rgba(0,0,0,0.5)}
+        .nav-item{color:#8a8aa0;transition:.3s}
+        .nav-item.active{color:var(--primary);transform:translateY(-5px);text-shadow:0 0 10px rgba(0,210,255,0.5)}
+        .custom-input{background:rgba(0,0,0,0.3);border:1px solid var(--border);color:white;transition:.3s}
+        .custom-input:focus{border-color:var(--primary);box-shadow:0 0 10px rgba(0,210,255,0.2);background:rgba(0,0,0,0.5)}
+        .loader{width:48px;height:48px;border:5px solid #FFF;border-bottom-color:var(--primary);border-radius:50%;display:inline-block;box-sizing:border-box;animation:rotation 1s linear infinite}
+        @keyframes rotation{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        .hide-scrollbar::-webkit-scrollbar{display:none}
+    </style>
+</head>
+<body>
+    <div id="loadingScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#1a1a2e]">
+        <div class="loader mb-4"></div>
+        <h2 class="text-[#00d2ff] font-bold tracking-widest text-sm animate-pulse">লোডিং হচ্ছে...</h2>
+    </div>
+
+    <!-- GATE SCREEN WITH TWO CHANNEL BUTTONS -->
+    <div id="gateScreen" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
+        <div class="glass-card w-full max-w-xs p-8 text-center border-t-4 border-[#00d2ff]">
+            <div class="w-20 h-20 bg-[#00d2ff]/20 rounded-full flex items-center justify-center mx-auto mb-6 ring-4 ring-[#00d2ff]/10">
+                <i class="fab fa-telegram-plane text-4xl text-[#00d2ff]"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2 text-white">স্বাগতম!</h2>
+            <p class="text-sm text-gray-300 mb-6 leading-relaxed">
+                অ্যাপ ব্যবহার করতে হলে নিচের <span class="font-bold text-[#00d2ff]">দুইটা চ্যানেলেই</span> জয়েন করা লাগবে।
+            </p>
+
+            <a href="https://t.me/ChildCoderBd_Official"
+               target="_blank"
+               class="btn-modern w-full py-3.5 block mb-3 flex items-center justify-center gap-2 shadow-lg no-underline text-white">
+                <i class="fas fa-paper-plane"></i>
+                Main Channel Join
+            </a>
+
+            <a href="https://t.me/WAB_EARN_Community"
+               target="_blank"
+               class="btn-modern w-full py-3.5 block mb-4 flex items-center justify-center gap-2 shadow-lg no-underline text-white"
+               style="background:linear-gradient(135deg,#924eff 0%,#c048ff 100%);">
+                <i class="fas fa-users"></i>
+                Community Join
+            </a>
+
+            <button onclick="verifyEntry()" class="w-full py-3.5 rounded-xl border border-white/20 text-white font-semibold hover:bg-white/10 transition">
+                যাচাই করুন (Verify)
+            </button>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden p-5 pt-8 max-w-md mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <img id="userPhoto" src="" class="w-12 h-12 rounded-full border-2 border-white/20 object-cover shadow-lg">
+                    <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#1a1a2e]"></div>
+                </div>
+                <div>
+                    <h3 id="userName" class="font-bold text-lg leading-tight text-white">ব্যবহারকারী</h3>
+                    <p class="text-[11px] text-[#00d2ff] font-semibold bg-[#00d2ff]/10 px-2 rounded-full inline-block mt-0.5">ভেরিফাইড ইউজার</p>
+                </div>
+            </div>
+            <div onclick="showNotifications()" class="w-10 h-10 glass-card flex items-center justify-center relative cursor-pointer hover:bg-white/10 transition">
+                <i class="fas fa-bell text-gray-300"></i>
+                <span class="absolute top-2.5 right-3 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+            </div>
+        </div>
+
+        <div id="contentArea">
+            <div id="page-home" class="page-section animate-fade-in">
+                <div class="glass-card p-6 mb-6 relative overflow-hidden bg-gradient-to-br from-[#ffffff]/5 to-transparent">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#924eff]/30 rounded-full blur-3xl"></div>
+                    <div class="relative z-10">
+                        <p class="text-xs text-gray-300 uppercase tracking-widest mb-1">মোট ব্যালেন্স</p>
+                        <h2 class="text-4xl font-bold text-white mb-5">৳ <span id="balanceDisplay">0.00</span></h2>
+                        <div class="flex justify-between items-end border-t border-white/10 pt-4">
+                            <div>
+                                <p class="text-[11px] text-gray-400">মোট রেফার</p>
+                                <p class="text-lg font-bold text-[#00d2ff]" id="referDisplay">0</p>
+                            </div>
+                            <div class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold">
+                                <i class="fas fa-circle text-[6px] mr-1"></i> সক্রিয়
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div onclick="watchAd()" class="glass-card p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition group">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#00d2ff] to-[#3a7bd5] flex items-center justify-center mb-3 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition">
+                            <i class="fas fa-play text-white text-lg"></i>
+                        </div>
+                        <span class="text-sm font-bold text-gray-200">ভিডিও দেখুন</span>
+                        <span class="text-[10px] text-gray-400 mt-1" id="adBonusText">+1 টাকা / ভিডিও</span>
+                    </div>
+                    <div onclick="navTo('withdraw')" class="glass-card p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition group">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#924eff] to-[#c048ff] flex items-center justify-center mb-3 shadow-lg shadow-purple-500/30 group-hover:scale-110 transition">
+                            <i class="fas fa-wallet text-white text-lg"></i>
+                        </div>
+                        <span class="text-sm font-bold text-gray-200">উইথড্র</span>
+                        <span class="text-[10px] text-gray-400 mt-1">টাকা নিন</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-sm flex items-center gap-2 text-gray-200"><i class="fas fa-users text-[#924eff]"></i> রেফার লিংক</h3>
+                        <span class="text-[10px] text-[#924eff] bg-[#924eff]/10 px-2 py-0.5 rounded font-bold" id="refBonusText">+2 টাকা বোনাস</span>
+                    </div>
+                    <div class="bg-[#0f172a]/60 rounded-xl p-1.5 flex items-center border border-white/5">
+                        <input type="text" id="refLink" readonly class="bg-transparent border-none outline-none w-full text-xs text-gray-400 px-3 truncate font-mono">
+                        <button onclick="copyRef()" class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/20 text-white transition">কপি</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-task" class="page-section hidden">
+                <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-white"><i class="fas fa-list-check text-[#00d2ff]"></i> সকল টাস্ক</h2>
+                <div id="taskList" class="space-y-3 pb-20"></div>
+            </div>
+
+            <div id="page-withdraw" class="page-section hidden">
+                <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-white"><i class="fas fa-money-bill-transfer text-emerald-400"></i> টাকা তুলুন</h2>
+                <div class="glass-card p-6">
+                    <div id="withdrawStep1">
+                        <p class="text-sm text-gray-300 mb-5 text-center">পেমেন্ট মেথড সিলেক্ট করুন</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div onclick="selectMethod('bkash')" class="cursor-pointer bg-white/5 hover:bg-[#e2136e]/20 p-5 rounded-2xl border border-white/10 hover:border-[#e2136e] text-center transition group">
+                                <img src="https://freelogopng.com/images/all_img/1656234745bkash-app-logo-png.png" class="h-12 mx-auto mb-3 object-contain group-hover:scale-110 transition" alt="Bkash">
+                                <p class="font-bold text-xs text-gray-300 group-hover:text-white">বিকাশ</p>
+                            </div>
+                            <div onclick="selectMethod('nagad')" class="cursor-pointer bg-white/5 hover:bg-[#f7941d]/20 p-5 rounded-2xl border border-white/10 hover:border-[#f7941d] text-center transition group">
+                                <img src="https://freelogopng.com/images/all_img/1679248787Nagad-Logo.png" class="h-12 mx-auto mb-3 object-contain group-hover:scale-110 transition" alt="Nagad">
+                                <p class="font-bold text-xs text-gray-300 group-hover:text-white">নগদ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="withdrawStep2" class="hidden">
+                        <button onclick="backToMethods()" class="text-xs text-gray-400 mb-5 flex items-center gap-1 hover:text-white transition"><i class="fas fa-chevron-left"></i> পেছনে যান</button>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-gray-300 ml-1">ওয়ালেট নাম্বার</label>
+                                <input type="number" id="withdrawNumber" placeholder="017xxxxxxxx" class="custom-input w-full p-4 rounded-xl mt-1.5 text-sm outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-300 ml-1">পরিমাণ (টাকা)</label>
+                                <input type="number" id="withdrawAmount" placeholder="সর্বনিম্ন ৫০" class="custom-input w-full p-4 rounded-xl mt-1.5 text-sm outline-none">
+                            </div>
+                        </div>
+                        <button onclick="submitWithdraw()" class="btn-modern w-full py-4 mt-8 shadow-lg">রিকোয়েস্ট পাঠান</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-leaderboard" class="page-section hidden">
+                <div class="glass-card p-1.5 flex justify-between mb-5 bg-[#0f172a]/50">
+                    <button onclick="switchLeaderboard('all')" class="lb-tab flex-1 py-2.5 text-xs rounded-lg bg-white/10 text-white font-bold transition">সেরা ৫০</button>
+                    <button onclick="switchLeaderboard('balance')" class="lb-tab flex-1 py-2.5 text-xs rounded-lg text-gray-400 transition">বড়লোক</button>
+                    <button onclick="switchLeaderboard('refer')" class="lb-tab flex-1 py-2.5 text-xs rounded-lg text-gray-400 transition">রেফারার</button>
+                </div>
+                <div id="leaderboardList" class="space-y-2.5 pb-24"></div>
+            </div>
+
+            <div id="page-chat" class="page-section hidden flex flex-col h-[78vh]">
+                <div id="chatBox" class="flex-1 overflow-y-auto mb-3 space-y-3 px-1 hide-scrollbar"></div>
+                <div class="glass-card p-2 flex gap-2 items-center rounded-full bg-[#0f172a]/80 border border-white/10">
+                    <input type="text" id="chatInput" class="flex-1 bg-transparent px-5 py-2.5 text-sm outline-none text-white placeholder-gray-500" placeholder="মেসেজ লিখুন...">
+                    <button onclick="sendMessage()" class="w-10 h-10 rounded-full bg-gradient-to-r from-[#00d2ff] to-[#3a7bd5] flex items-center justify-center text-white shadow-lg active:scale-95 transition">
+                        <i class="fas fa-paper-plane text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="page-admin" class="page-section hidden pb-20">
+                <h2 class="text-xl font-bold mb-5 text-grad border-b border-white/10 pb-2">অ্যাডমিন প্যানেল</h2>
+
+                <div class="glass-card p-5 mb-5">
+                    <h3 class="font-bold text-sm mb-3 text-[#00d2ff]">📢 নোটিশ পাঠান</h3>
+                    <textarea id="adminNotice" class="custom-input w-full p-3 rounded-xl text-xs text-white mb-3" rows="2" placeholder="এখানে নোটিশ লিখুন..."></textarea>
+                    <button onclick="sendGlobalNotice()" class="btn-modern w-full py-2.5 text-xs rounded-lg">ব্রডকাস্ট করুন</button>
+                </div>
+
+                <div class="glass-card p-5 mb-5 border border-[#00d2ff]/30">
+                    <h3 class="font-bold text-sm mb-3 text-[#00d2ff]">➕ নতুন টাস্ক যোগ করুন</h3>
+                    <div class="space-y-3 mb-3">
+                        <input type="text" id="adminTaskTitle" placeholder="টাস্কের নাম (যেমন: Join Channel)" class="custom-input w-full p-3 rounded-xl text-xs">
+                        <input type="text" id="adminTaskLogo" placeholder="লোগো লিংক (ছবির URL)" class="custom-input w-full p-3 rounded-xl text-xs">
+                        <input type="text" id="adminTaskLink" placeholder="চ্যানেল/বট লিংক (https://t.me/...)" class="custom-input w-full p-3 rounded-xl text-xs">
+                        <input type="number" id="adminTaskReward" placeholder="টাকার পরিমাণ (যেমন: ২)" class="custom-input w-full p-3 rounded-xl text-xs">
+                    </div>
+                    <button onclick="addTask()" class="btn-modern w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600">পাবলিশ করুন</button>
+                </div>
+
+                <div class="glass-card p-5 mb-5">
+                    <h3 class="font-bold text-sm mb-3 text-red-400">🗑 টাস্ক ম্যানেজ করুন</h3>
+                    <div id="adminTaskList" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                </div>
+
+                <div class="glass-card p-5">
+                    <h3 class="font-bold text-sm mb-3 text-white">💸 পেমেন্ট রিকোয়েস্ট</h3>
+                    <div id="adminWithdrawals" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bottomNav" class="hidden fixed bottom-0 left-0 right-0 glass-nav py-3 px-6 flex justify-between items-center z-50 pb-8">
+        <div onclick="navTo('home')" class="nav-item active" id="nav-home"><i class="fas fa-house text-xl"></i><span class="text-[10px] block mt-1">হোম</span></div>
+        <div onclick="navTo('task')" class="nav-item" id="nav-task"><i class="fas fa-layer-group text-xl"></i><span class="text-[10px] block mt-1">টাস্ক</span></div>
+        <div onclick="navTo('withdraw')" class="nav-item" id="nav-withdraw"><i class="fas fa-wallet text-xl"></i><span class="text-[10px] block mt-1">উইথড্র</span></div>
+        <div onclick="navTo('leaderboard')" class="nav-item" id="nav-leaderboard"><i class="fas fa-trophy text-xl"></i><span class="text-[10px] block mt-1">র‍্যাংক</span></div>
+        <div onclick="navTo('chat')" class="nav-item" id="nav-chat"><i class="fas fa-comments text-xl"></i><span class="text-[10px] block mt-1">চ্যাট</span></div>
+        <div onclick="navTo('admin')" class="nav-item hidden text-red-500" id="nav-admin"><i class="fas fa-user-shield text-xl"></i><span class="text-[10px] block mt-1">অ্যাডমিন</span></div>
+    </div>
+
+<!-- ============================
+     Firebase + App Script (MODULE)
+     ============================ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getDatabase, ref, set, get, update, push,
+  onChildAdded, query, orderByChild, limitToLast,
+  onValue, remove
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+/* ============================
+   SETTINGS
+   ============================ */
+const SETTINGS = {
+  botUsername: "WAB_EARN_BOT",
+  adminId: 8225720283,
+  appUsername: "WAB_EARN_BOT/app",
+  adReward: 1,
+  referReward: 2,
+  minWithdraw: 1,
+  monetagZoneId: 10138839,
+  firebase: {
+    apiKey: "AIzaSyDE2hZs0xw3lo9LXqmwxc3qdM8RXV3IUms",
+    authDomain: "crazy-coder-bd-2.firebaseapp.com",
+    databaseURL: "https://crazy-coder-bd-2-default-rtdb.firebaseio.com",
+    projectId: "crazy-coder-bd-2",
+    storageBucket: "crazy-coder-bd-2.firebasestorage.app",
+    messagingSenderId: "19060657610",
+    appId: "1:19060657610:web:dbe46d1d8df02e61871333",
+    measurementId: "G-82HW35CJP0"
+  }
+};
+
+/* ✅ বাধ্যতামূলক চ্যানেল লিস্ট */
+const REQUIRED_CHANNELS = [
+  "@ChildCoderBd_Official",
+  "@WAB_EARN_Community"
+];
+
+/* ============================
+   Monetag
+   ============================ */
+(function loadMonetag(){
+  try {
+    const s = document.createElement("script");
+    s.src = "//libtl.com/sdk.js";
+    s.dataset.zone = SETTINGS.monetagZoneId;
+    s.dataset.sdk = "show_" + SETTINGS.monetagZoneId;
+    document.head.appendChild(s);
+  } catch(e){
+    console.warn("Monetag load fail", e);
+  }
+})();
+
+/* UI Text */
+document.getElementById("adBonusText").innerText = `+${SETTINGS.adReward} টাকা / ভিডিও`;
+document.getElementById("refBonusText").innerText = `+${SETTINGS.referReward} টাকা বোনাস`;
+document.getElementById("withdrawAmount").placeholder = `সর্বনিম্ন ${SETTINGS.minWithdraw}`;
+
+/* Firebase init */
+let app = null;
+let db = null;
+try {
+  app = initializeApp(SETTINGS.firebase);
+  db = getDatabase(app);
+  console.log("Firebase initialized.");
+} catch (err) {
+  console.error("Firebase init error:", err);
+}
+
+/* Telegram WebApp init */
+const tg = window.Telegram?.WebApp || { initDataUnsafe: {}, expand: ()=>{}, setHeaderColor: ()=>{}, setBackgroundColor: ()=>{} };
+try { tg.expand(); tg.setHeaderColor("#1a1a2e"); tg.setBackgroundColor("#1a1a2e"); } catch(e){}
+
+/* Encoded bot info (token এখনও client এ আছে, প্রোডে backend দিয়ে করা ভালো) */
+const e = {
+  k: atob("ODIyMjU1NzI0NzpBQUhBU3dDSTBkRF85djYyUkpMZThEWXR6MUNiaXlqTG1haw=="),
+  c: "@shiyam744", // আগেরটা রাখা আছে, এখন আর ইউজ করছি না, future use থাকলে কাজে লাগবে
+  u: atob(btoa(SETTINGS.appUsername)),
+  i: SETTINGS.adminId
+};
+
+/* State */
+let currentUser = tg.initDataUnsafe.user || {
+  id: 12345678,
+  first_name: "Test",
+  last_name: "User",
+  photo_url: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+};
+let userData = {};
+let adLocked = false;
+
+/* Helpers */
+function writeData(path, payload) { return update(ref(db, path), payload); }
+function pushData(path, payload) { return push(ref(db, path), payload); }
+async function readOnce(path) {
+  const snap = await get(ref(db, path));
+  return snap.exists() ? snap.val() : null;
+}
+
+/* Watch Ad */
+window.watchAd = async () => {
+  if (adLocked) return;
+  const last = userData.lastAdTime || 0;
+  const now = Date.now();
+  if (now - last < 60000) {
+    const sec = Math.ceil((60000 - (now - last)) / 1000);
+    return Swal.fire({
+      icon: "warning",
+      title: "অপেক্ষা করুন",
+      text: `আর ${sec} সেকেন্ড পর চেষ্টা করুন`,
+      background: "#1a1a2e",
+      color: "#fff",
+      confirmButtonColor: "#00d2ff"
+    });
+  }
+  adLocked = true;
+  try {
+    const sdkName = "show_" + SETTINGS.monetagZoneId;
+    if (typeof window[sdkName] === "function") {
+      window[sdkName]().then(()=>{}).catch(()=>{});
+    }
+
+    let timerRef;
+    await Swal.fire({
+      title: "ভিডিও চলছে...",
+      html: "অপেক্ষা করুন <b>15</b> সেকেন্ড",
+      timer: 15000,
+      timerProgressBar: true,
+      background: "#1a1a2e",
+      color: "#fff",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+        const b = Swal.getHtmlContainer().querySelector("b");
+        timerRef = setInterval(() => { b.textContent = Math.ceil(Swal.getTimerLeft() / 1000); }, 100);
+      },
+      willClose: () => {
+        clearInterval(timerRef);
+      }
+    });
+
+    const newBal = (userData.balance || 0) + SETTINGS.adReward;
+    await update(ref(db, `users/${currentUser.id}`), {
+      balance: newBal,
+      lastAdTime: Date.now()
+    });
+    Swal.fire({
+      icon: "success",
+      title: `+${SETTINGS.adReward} টাকা যোগ হয়েছে!`,
+      background: "#1a1a2e",
+      color: "#fff",
+      timer: 2000,
+      showConfirmButton: false
+    });
+  } catch (err) {
+    console.error("watchAd err", err);
+    Swal.fire({ icon: "error", text: "ভিডিও লোড হয়নি", background: "#1a1a2e", color: "#fff" });
+  } finally {
+    adLocked = false;
+  }
+};
+
+/* ✅ Verify: Must be member of ALL REQUIRED_CHANNELS */
+window.verifyEntry = async () => {
+  if (adLocked) return;
+  adLocked = true;
+  Swal.fire({
+    title: "চেক করা হচ্ছে...",
+    didOpen: () => Swal.showLoading(),
+    background: "#1a1a2e",
+    color: "#fff",
+    showConfirmButton: false
+  });
+
+  try {
+    for (const chan of REQUIRED_CHANNELS) {
+      const url = `https://api.telegram.org/bot${e.k}/getChatMember?chat_id=${chan}&user_id=${currentUser.id}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.ok || !["creator","administrator","member"].includes(data.result.status)) {
+        Swal.fire({
+          icon: "error",
+          title: "চ্যানেলে নেই",
+          text: "দয়া করে দুটো চ্যানেলেই জয়েন করে আবার Verify দিন।",
+          background: "#1a1a2e",
+          color: "#fff"
+        });
+        adLocked = false;
+        return;
+      }
+    }
+
+    await update(ref(db, `users/${currentUser.id}`), { verified: true });
+    Swal.close();
+    document.getElementById("gateScreen").classList.add("hidden");
+    document.getElementById("mainApp").classList.remove("hidden");
+    document.getElementById("bottomNav").classList.remove("hidden");
+  } catch (err) {
+    console.error("verifyEntry err", err);
+    Swal.fire({
+      icon: "error",
+      text: "নেটওয়ার্ক সমস্যা, আবার ট্রাই করুন।",
+      background: "#1a1a2e",
+      color: "#fff"
+    });
+  } finally {
+    adLocked = false;
+  }
+};
+
+/* Navigation */
+window.navTo = (page) => {
+  document.querySelectorAll(".page-section").forEach(p => p.classList.add("hidden"));
+  const target = document.getElementById(`page-${page}`);
+  if (target) target.classList.remove("hidden");
+
+  document.querySelectorAll(".nav-item").forEach(n => {
+    n.classList.remove("active","text-white");
+    n.classList.add("text-gray-400");
+  });
+  const navEl = document.getElementById(`nav-${page}`);
+  if (navEl) {
+    navEl.classList.add("active","text-white");
+    navEl.classList.remove("text-gray-400");
+  }
+
+  if (page === "leaderboard") loadLeaderboard("all");
+  if (page === "chat") setTimeout(() => {
+    const box = document.getElementById("chatBox");
+    box.scrollTop = box.scrollHeight;
+  }, 100);
+  if (page === "admin") loadAdminPanel();
+};
+
+/* Notifications */
+window.showNotifications = async () => {
+  try {
+    const snap = await get(query(ref(db,"notifications"), limitToLast(5)));
+    if (snap.exists()) {
+      let html = '<div class="text-left space-y-3">', arr = [];
+      snap.forEach(s => arr.push(s.val()));
+      arr.reverse();
+      arr.forEach(item => {
+        const t = new Date(item.time).toLocaleTimeString();
+        html += `<div class="bg-white/5 p-3 rounded-lg border border-white/10"><p class="text-xs text-gray-300">${item.msg}</p><p class="text-[9px] text-gray-500 mt-1 text-right">${t}</p></div>`;
+      });
+      html += "</div>";
+      Swal.fire({
+        title:"🔔 নোটিশ বোর্ড",
+        html,
+        background:"#1a1a2e",
+        color:"#fff",
+        confirmButtonText:"বন্ধ করুন"
+      });
+    } else {
+      Swal.fire({ text:"কোনো নোটিশ নেই", background:"#1a1a2e", color:"#fff" });
+    }
+  } catch (err) {
+    console.error("showNotifications", err);
+    Swal.fire({ text:"এরর হয়েছে", background:"#1a1a2e", color:"#fff" });
+  }
+};
+
+/* Withdraw */
+window.selectMethod = (m) => {
+  window.selectedMethod = m;
+  document.getElementById("withdrawStep1").classList.add("hidden");
+  document.getElementById("withdrawStep2").classList.remove("hidden");
+};
+window.backToMethods = () => {
+  document.getElementById("withdrawStep1").classList.remove("hidden");
+  document.getElementById("withdrawStep2").classList.add("hidden");
+};
+window.submitWithdraw = async () => {
+  if (adLocked) return;
+  adLocked = true;
+  try {
+    const number = document.getElementById("withdrawNumber").value;
+    const amount = parseInt(document.getElementById("withdrawAmount").value || 0);
+    if (!number || !amount || amount < SETTINGS.minWithdraw || (userData.balance || 0) < amount) {
+      Swal.fire({
+        icon:"error",
+        text:`কমপক্ষে ${SETTINGS.minWithdraw} টাকা এবং সঠিক ব্যালেন্স প্রয়োজন।`,
+        background:"#1a1a2e",
+        color:"#fff"
+      });
+      adLocked = false;
+      return;
+    }
+    await update(ref(db,`users/${currentUser.id}`),{ balance:(userData.balance || 0) - amount });
+    await push(ref(db,"withdrawals"),{
+      userId: currentUser.id,
+      name: currentUser.first_name,
+      method: window.selectedMethod,
+      number,
+      amount,
+      status:"pending",
+      time:Date.now()
+    });
+    Swal.fire({ icon:"success", text:"রিকোয়েস্ট সফল হয়েছে!", background:"#1a1a2e", color:"#fff" });
+    backToMethods();
+  } catch (err) {
+    console.error("submitWithdraw", err);
+    Swal.fire({ icon:"error", text:"রিকোয়েস্ট পাঠানো যায়নি", background:"#1a1a2e", color:"#fff" });
+  } finally {
+    adLocked = false;
+  }
+};
+
+/* Tasks */
+async function renderTasks(){
+  const listEl = document.getElementById("taskList");
+  listEl.innerHTML = "";
+  try {
+    const tasksSnap = await get(ref(db,"tasks"));
+    if (tasksSnap.exists()) {
+      const completedSnap = await get(ref(db,`users/${currentUser.id}/completedTasks`));
+      const completed = completedSnap.exists() ? completedSnap.val() : {};
+      const tasks = tasksSnap.val();
+      Object.keys(tasks).forEach(key => {
+        if (!completed[key]) {
+          const t = tasks[key];
+          const logoHtml = t.logo
+            ? `<img src="${t.logo}" class="w-10 h-10 rounded-full object-cover border border-white/20">`
+            : `<div class="w-10 h-10 rounded-full bg-[#00d2ff]/20 flex items-center justify-center text-[#00d2ff]"><i class="fab fa-telegram-plane"></i></div>`;
+          listEl.innerHTML += `
+            <div class="glass-card p-4 flex justify-between items-center border border-white/5">
+              <div class="flex items-center gap-3">
+                ${logoHtml}
+                <div>
+                  <h4 class="font-bold text-sm text-gray-200">${t.title||"Join Channel"}</h4>
+                  <p class="text-[10px] text-[#00d2ff] font-bold">+${t.reward} টাকা</p>
+                </div>
+              </div>
+              <button onclick="doTask('${key}', '${t.link}', ${t.reward})"
+                class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#00d2ff]/20 hover:text-[#00d2ff] transition">
+                শুরু
+              </button>
+            </div>`;
+        }
+      });
+      if (!listEl.innerHTML) {
+        listEl.innerHTML = '<div class="text-center py-10 opacity-50"><p>কোনো টাস্ক নেই</p></div>';
+      }
+    } else {
+      listEl.innerHTML = '<div class="text-center py-10 opacity-50"><p>কোনো টাস্ক নেই</p></div>';
+    }
+  } catch (err) {
+    console.error("renderTasks", err);
+    listEl.innerHTML = '<div class="text-center py-10 opacity-50"><p>লোডিং ত্রুটি</p></div>';
+  }
+}
+window.doTask = (key, link, reward) => {
+  window.open(link,"_blank");
+  setTimeout(async () => {
+    const newBal = (userData.balance || 0) + reward;
+    await update(ref(db,`users/${currentUser.id}`),{ balance:newBal });
+    await update(ref(db,`users/${currentUser.id}/completedTasks`),{ [key]:true });
+    Swal.fire({
+      icon:"success",
+      title:"টাস্ক সম্পন্ন হয়েছে",
+      background:"#1a1a2e",
+      color:"#fff",
+      timer:1500,
+      showConfirmButton:false
+    });
+    renderTasks();
+  }, 5000);
+};
+
+/* Chat */
+window.sendMessage = async () => {
+  const msg = document.getElementById("chatInput").value.trim();
+  if (!msg) return;
+  try {
+    await push(ref(db,"chat"),{
+      uid: currentUser.id,
+      name: currentUser.first_name,
+      photo: currentUser.photo_url,
+      msg,
+      time: Date.now()
+    });
+    document.getElementById("chatInput").value = "";
+  } catch (err) {
+    console.error("sendMessage", err);
+  }
+};
+
+/* Admin */
+window.addTask = async () => {
+  const title = document.getElementById("adminTaskTitle").value;
+  const logo = document.getElementById("adminTaskLogo").value;
+  const link = document.getElementById("adminTaskLink").value;
+  const reward = parseInt(document.getElementById("adminTaskReward").value || "0");
+  if (!link || !reward) {
+    return Swal.fire({ toast:true, icon:"error", title:"লিংক ও বোনাস লাগবে" });
+  }
+  await push(ref(db,"tasks"),{ title, logo, link, reward });
+  Swal.fire({ toast:true, icon:"success", title:"টাস্ক অ্যাড হয়েছে" });
+  loadAdminTasks();
+};
+
+window.sendGlobalNotice = async () => {
+  const txt = document.getElementById("adminNotice").value;
+  if (!txt) return;
+  await push(ref(db,"notifications"),{ msg:txt, time:Date.now() });
+  Swal.fire({ toast:true, icon:"success", title:"নোটিশ পাঠানো হয়েছে" });
+};
+
+window.loadAdminTasks = async () => {
+  const el = document.getElementById("adminTaskList");
+  el.innerHTML = '<p class="text-xs text-gray-400">লোডিং...</p>';
+  try {
+    const snap = await get(ref(db,"tasks"));
+    el.innerHTML = "";
+    if (snap.exists()) {
+      snap.forEach(s => {
+        const c = s.val();
+        el.innerHTML += `
+          <div class="bg-white/5 p-2 rounded flex justify-between items-center border border-white/5">
+            <div class="flex items-center gap-2">
+              <img src="${c.logo||'https://cdn-icons-png.flaticon.com/512/2111/2111646.png'}" class="w-6 h-6 rounded-full">
+              <div class="overflow-hidden">
+                <p class="text-xs font-bold text-gray-200">${c.title||"Task"}</p>
+                <p class="text-[9px] text-gray-500">${c.reward} টাকা</p>
+              </div>
+            </div>
+            <button onclick="deleteTask('${s.key}')"
+              class="bg-red-500/20 text-red-400 p-2 rounded-lg hover:bg-red-500/30 transition">
+              <i class="fas fa-trash text-xs"></i>
+            </button>
+          </div>`;
+      });
+    } else {
+      el.innerHTML = '<p class="text-xs text-gray-500 text-center">কোনো টাস্ক নেই</p>';
+    }
+  } catch (err) {
+    console.error("loadAdminTasks", err);
+    el.innerHTML = '<p class="text-xs text-red-400 text-center">লোডিং ত্রুটি</p>';
+  }
+};
+
+window.deleteTask = async (key) => {
+  if (!confirm("আপনি কি এই টাস্কটি ডিলিট করতে চান?")) return;
+  await remove(ref(db,`tasks/${key}`));
+  loadAdminTasks();
+};
+
+function loadAdminPanel(){
+  loadAdminTasks();
+  const wrap = document.getElementById("adminWithdrawals");
+  onValue(query(ref(db,"withdrawals"), limitToLast(20)), snap => {
+    wrap.innerHTML = "";
+    const arr = [];
+    snap.forEach(s => arr.push({ key:s.key, ...s.val() }));
+    arr.reverse();
+    arr.forEach(b => {
+      wrap.innerHTML += `
+        <div class="bg-white/5 p-3 rounded-xl border border-white/5 mb-2">
+          <div class="flex justify-between mb-1">
+            <span class="font-bold text-xs">${b.name}</span>
+            <span class="text-[10px] bg-white/10 px-2 rounded">${b.method}</span>
+          </div>
+          <p class="text-[10px] text-gray-400 mb-2">${b.number} | ${b.amount} টাকা</p>
+          ${
+            b.status === "pending"
+              ? `<div class="flex gap-2">
+                  <button onclick="processWithdraw('${b.key}','paid',${b.amount},'${b.userId}')"
+                    class="flex-1 bg-emerald-500/20 text-emerald-400 py-1 rounded text-[10px]">Approve</button>
+                  <button onclick="processWithdraw('${b.key}','rejected',${b.amount},'${b.userId}')"
+                    class="flex-1 bg-red-500/20 text-red-400 py-1 rounded text-[10px]">Reject</button>
+                </div>`
+              : `<span class="text-[10px] ${b.status === 'paid' ? 'text-emerald-400' : 'text-red-400'} uppercase font-bold tracking-wider">${b.status}</span>`
+          }
+        </div>`;
+    });
+  });
+}
+
+window.processWithdraw = async (key,status,amount,userId) => {
+  await update(ref(db,`withdrawals/${key}`),{ status });
+  if (status === "rejected") {
+    const userSnap = await get(ref(db,`users/${userId}`));
+    if (userSnap.exists()) {
+      const cur = userSnap.val();
+      await update(ref(db,`users/${userId}`),{ balance:(cur.balance||0)+amount });
+    }
+  }
+};
+
+/* Copy ref link */
+window.copyRef = () => {
+  const el = document.getElementById("refLink");
+  el.select();
+  document.execCommand("copy");
+  Swal.fire({
+    toast:true,
+    position:"top",
+    icon:"success",
+    title:"কপি হয়েছে",
+    showConfirmButton:false,
+    timer:1000,
+    background:"#333",
+    color:"#fff"
+  });
+};
+
+/* Leaderboard */
+window.switchLeaderboard = (type) => {
+  document.querySelectorAll(".lb-tab").forEach(t => {
+    t.classList.remove("bg-white/10","text-white","font-bold");
+    t.classList.add("text-gray-500");
+  });
+  try {
+    event.target.classList.add("bg-white/10","text-white","font-bold");
+    event.target.classList.remove("text-gray-500");
+  } catch(e){}
+  loadLeaderboard(type);
+};
+
+async function loadLeaderboard(type="all"){
+  const wrap = document.getElementById("leaderboardList");
+  wrap.innerHTML = '<div class="loader mx-auto scale-50"></div>';
+  try {
+    const snap = await get(ref(db,"users"));
+    const arr = [];
+    snap.forEach(s => arr.push(s.val()));
+    if (type === "balance" || type === "all") {
+      arr.sort((a,b) => (b.balance||0) - (a.balance||0));
+    } else if (type === "refer") {
+      arr.sort((a,b) => (b.referCount||0) - (a.referCount||0));
+    }
+    const top = arr.slice(0,50);
+    wrap.innerHTML = "";
+    top.forEach((u,idx) => {
+      wrap.innerHTML += `
+        <div class="glass-card p-3 flex justify-between items-center mb-2">
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-gray-500 w-6">#${idx+1}</span>
+            <img src="${u.photo}" class="w-8 h-8 rounded-full bg-gray-700">
+            <div>
+              <p class="font-bold text-xs text-gray-200">${u.firstName}</p>
+              <p class="text-[10px] text-gray-500">রেফার: ${u.referCount||0}</p>
+            </div>
+          </div>
+          <p class="font-bold text-[#00d2ff] text-sm">৳ ${u.balance||0}</p>
+        </div>`;
+    });
+  } catch (err) {
+    console.error("loadLeaderboard", err);
+    wrap.innerHTML = '<p class="text-center text-red-400 text-xs">এরর হয়েছে</p>';
+  }
+}
+
+/* INIT APP */
+(async function initApp(){
+  try {
+    const userRef = ref(db,`users/${currentUser.id}`);
+    const snap = await get(userRef);
+
+    if (snap.exists()) {
+      userData = snap.val();
+      if (currentUser.id == SETTINGS.adminId) {
+        document.getElementById("nav-admin").classList.remove("hidden");
+      }
+      if (userData.verified) {
+        document.getElementById("mainApp").classList.remove("hidden");
+        document.getElementById("bottomNav").classList.remove("hidden");
+        await renderTasks();
+
+        const chatWrap = document.getElementById("chatBox");
+        onChildAdded(query(ref(db,"chat"), limitToLast(50)), s => {
+          const c = s.val();
+          const isMe = c.uid == currentUser.id;
+          const html = `
+            <div class="flex gap-2 mb-3 ${isMe ? "flex-row-reverse" : ""} animate-fade-in">
+              <img src="${c.photo}" class="w-8 h-8 rounded-full border border-white/10 shadow-sm">
+              <div class="px-4 py-2 rounded-2xl text-xs max-w-[75%] shadow-sm ${isMe ? "bg-gradient-to-r from-[#00d2ff] to-[#3a7bd5] text-white font-semibold" : "bg-white/10 text-gray-200"}">
+                ${isMe ? "" : `<p class="font-bold mb-1 text-[10px] opacity-60">${c.name}</p>`}
+                ${c.msg}
+              </div>
+            </div>`;
+          chatWrap.innerHTML += html;
+          chatWrap.scrollTop = chatWrap.scrollHeight;
+        });
+      } else {
+        document.getElementById("gateScreen").classList.remove("hidden");
+      }
+    } else {
+      let startParam = tg.initDataUnsafe.start_param;
+      if (startParam && startParam.startsWith("ref")) {
+        startParam = startParam.replace("ref","");
+        if (startParam && startParam != currentUser.id) {
+          const refSnap = await get(ref(db,`users/${startParam}`));
+          if (refSnap.exists()) {
+            const refUser = refSnap.val();
+            await update(ref(db,`users/${startParam}`),{
+              balance:(refUser.balance||0) + SETTINGS.referReward,
+              referCount:(refUser.referCount||0) + 1
+            });
+          }
+        }
+      }
+
+      const newUser = {
+        id: currentUser.id,
+        firstName: currentUser.first_name,
+        photo: currentUser.photo_url || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+        balance: 0,
+        referCount: 0,
+        verified: false
+      };
+      await set(userRef,newUser);
+      userData = newUser;
+      document.getElementById("gateScreen").classList.remove("hidden");
+    }
+
+    document.getElementById("loadingScreen").classList.add("hidden");
+
+    onValue(ref(db,`users/${currentUser.id}`), s => {
+      if (s.exists()) {
+        userData = s.val();
+        document.getElementById("userPhoto").src = userData.photo;
+        document.getElementById("userName").innerText = userData.firstName;
+        document.getElementById("balanceDisplay").innerText = userData.balance || 0;
+        document.getElementById("referDisplay").innerText = userData.referCount || 0;
+        document.getElementById("refLink").value = `https://t.me/${SETTINGS.botUsername}/app?startapp=ref${currentUser.id}`;
+      }
+    });
+
+    onChildAdded(ref(db,"notifications"), n => {
+      if (Date.now() - n.val().time < 60000) {
+        Swal.fire({
+          title:"📢 নোটিশ",
+          text:n.val().msg,
+          background:"#1a1a2e",
+          color:"#fff",
+          confirmButtonColor:"#00d2ff"
+        });
+      }
+    });
+  } catch (err) {
+    console.error("initApp err", err);
+    document.getElementById("loadingScreen").classList.add("hidden");
+    Swal.fire({
+      icon:"error",
+      title:"এরর",
+      text:"অ্যাপ লোড হচ্ছে না। কনসোল চেক করো",
+      background:"#1a1a2e",
+      color:"#fff"
+    });
+  }
+})();
+</script>
+</body>
+</html>
